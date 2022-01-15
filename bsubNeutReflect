@@ -1,0 +1,166 @@
+#!/bin/sh
+
+
+NJOBS=1
+SOURCE=88Y
+DATASETID=0
+DESIGN=-1
+PART=neutron
+ENERGY=1.8
+NEV=100
+QUEUE=long
+EXE=no
+OTYPE=ascii
+BEOradius=12.7
+BEOthick=8.0
+XNBIAS=1000
+BEPURE=""
+
+input=($@)
+
+for((i=0; i<$#; i++))
+do
+
+  if [ "${input[i]}" = "-usage" ];
+  then
+    echo "bsubNeutReflect -n NJOBS -src SOURCE -set DATASETID -d DESIGN -dr BEOradius -dt BEOthick -part PART -E ENERGY(MeV) -ngen NEV -otype OTYPE -q QUEUE "
+    exit
+  fi
+
+  if [ "${input[i]}" = "-n" ];
+  then
+    NJOBS=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-src" ];
+  then
+    SOURCE=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-set" ];
+  then
+    DATASETID=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-d" ];
+  then
+    DESIGN=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-dr" ];
+  then
+    BEOradius=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-dt" ];
+  then
+    BEOthick=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-part" ];
+  then
+    PART=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-E" ];
+  then
+    ENERGY=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-ngen" ];
+  then
+    NEV=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-otype" ];
+  then
+    OTYPE=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-q" ];
+  then
+    QUEUE=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-bias" ];
+  then
+    XNBIAS=${input[i+1]}
+  fi
+
+  if [ "${input[i]}" = "-bepure" ];
+  then
+    BEPURE="-bepure" 
+  fi
+
+  if [ "${input[i]}" = "-exe" ];
+  then
+    EXE=yes
+  fi
+
+done
+
+
+DATASETIDHEX=`printf "0x%04x" ${DATASETID}`
+DATE=`date +%m%d%y`
+
+#echo ${DATE}
+
+
+if [ ${NEV} -gt 999999 ]
+then
+  REDNEV=$[NEV/1000000]M
+elif [ ${NEV} -gt 999 ]
+then
+  REDNEV=$[NEV/1000]K
+else
+  REDNEV=${NEV}
+fi
+if [ "${DESIGN}" = "-1" ]
+then
+  STATUSFILE=NeutReflect_${REDNEV}_DesignNULL${DATASETIDHEX}_${SOURCE}_${PART}_${DATE}_
+elif [ "${DESIGN}" = "-2" ]
+then
+  STATUSFILE=NeutReflect_${REDNEV}_Diag0${DATASETIDHEX}_${SOURCE}_${PART}_${DATE}_
+elif [ "${DESIGN}" = "-3" ]
+then
+  STATUSFILE=NeutReflect_${REDNEV}_Diag1${DATASETIDHEX}_${SOURCE}_${PART}_${DATE}_
+elif [ "${DESIGN}" = "-4" ]
+then
+  STATUSFILE=NeutReflect_${REDNEV}_Diag2${DATASETIDHEX}_${SOURCE}_${PART}_${DATE}_
+else
+  STATUSFILE=NeutReflect_${REDNEV}_Design${DESIGN}${DATASETIDHEX}_${SOURCE}_${PART}_${DATE}_
+fi
+
+#find latest file
+PREFIXDIR=/nfs/slac/g/cdms/u01/users/${USER}/NeutReflect/
+BSUBOUTDIR=${PREFIXDIR}batchOutput/
+MIN=`ls ${PREFIXDIR}batchOutput |grep ${STATUSFILE} |awk 'BEGIN{FS="[_.]"; val=0;}{if($7>val){val=$7}}END{print val}'`
+#ls ${PREFIXDIR}batchOutput |grep ${STATUSFILE}
+MIN=$[MIN+1]
+
+#echo ${MIN}
+
+mkdir -p ${BSUBOUTDIR}
+#be sure data directories exist based on OTYPE
+if [ "${OTYPE}" = "root" ];
+then
+  mkdir -p ${PREFIXDIR}SLACroot/
+else
+  mkdir -p ${PREFIXDIR}SLAC/
+fi
+
+for ((i=0; i<${NJOBS}; i++))
+do
+
+  FILENO=$[MIN+i]
+  if [ ${EXE} != "yes" ]
+  then
+    echo bsub -q ${QUEUE} -o ${BSUBOUTDIR}${STATUSFILE}${FILENO}.txt NeutReflectometry -src ${SOURCE} -d ${DESIGN} -dr ${BEOradius} -dt ${BEOthick} ${BEPURE} -bias ${XNBIAS} -set ${DATASETID} -part ${PART} -E ${ENERGY} -ngen ${NEV} -otype ${OTYPE} -nomac -slac
+    echo touch ${BSUBOUTDIR}${STATUSFILE}${FILENO}.txt
+  else
+    echo submitting to batch farm...
+    bsub -q ${QUEUE} -o ${BSUBOUTDIR}${STATUSFILE}${FILENO}.txt NeutReflectometry -src ${SOURCE} -d ${DESIGN} -dr ${BEOradius} -dt ${BEOthick} ${BEPURE} -bias ${XNBIAS} -set ${DATASETID} -part ${PART} -E ${ENERGY} -ngen ${NEV} -otype ${OTYPE} -nomac -slac
+    echo using ${BSUBOUTDIR}${STATUSFILE}${FILENO}.txt for output ...
+    touch ${BSUBOUTDIR}${STATUSFILE}${FILENO}.txt
+  fi
+done

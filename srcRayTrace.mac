@@ -1,0 +1,21 @@
+# Create a scene handler for a specific graphics system
+# (Edit the next lines(s) to choose another graphics system
+/vis/open RayTracer
+
+
+# Draw Scene
+#
+#/vis/viewer/set/style surface
+/vis/drawVolume
+#/vis/viewer/set/lightsThetaPhi 0 0 deg
+/vis/viewer/set/upVector 0 0 1
+/vis/viewer/set/lightsMove cam
+#/vis/viewer/set/viewpointThetaPhi 90 0 deg
+/vis/viewer/set/viewpointThetaPhi 45 90 deg
+/vis/viewer/zoom 1.0 
+/vis/viewer/refresh
+
+
+/vis/rayTracer/trace
+
+

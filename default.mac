@@ -1,0 +1,76 @@
+#
+# Macro file for the initialization phase of "simpl03.cc"
+# when running in interactive mode
+#
+# Sets some default verbose
+#
+/control/verbose 2
+/run/verbose 2
+/tracking/verbose 0
+#/hits/verbose 0
+
+## create empty scene
+#
+/vis/scene/create
+
+# Create a scene handler for a specific graphics system
+# (Edit the next lines(s) to choose another graphics system
+#
+/vis/open OGLIX
+#/vis/open HepRepFile 
+#/vis/open DAWNFILE 
+
+/vis/viewer/create
+
+# Draw Scene
+#
+/vis/viewer/set/style surface
+#/vis/viewer/set/viewpointThetaPhi 60 20 deg
+/vis/viewer/set/lightsThetaPhi 90 0 deg
+/vis/viewer/set/viewpointThetaPhi 45 20 deg
+#/vis/viewer/set/viewpointThetaPhi 90 20 deg
+#/vis/viewer/zoom 2.0
+/vis/viewer/zoom 0.5
+#/vis/viewer/flush
+#
+# for drawing the tracks
+# (if too many tracks cause core dump => storeTrajectory 0)
+#/tracking/storeTrajectory 0
+#/vis/scene/add/trajectories
+#/vis/modeling/trajectories/create/drawByCharge
+#/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
+#/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
+#
+#/vis/scene/endOfEventAction accumulate
+#make some special colors
+/tracking/storeTrajectory 0
+/vis/scene/add/trajectories
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/setRGBA neutron 1 0.45 0.08 1
+/vis/scene/endOfEventAction accumulate
+#
+#
+
+/run/NeutReflect/UseRandomTag false
+
+#/AstroE2/detector/deactivate Array
+#/AstroE2/detector/deactivate Antico
+
+
+#/gps/pos/centre 0. 0. 9. m 
+#/gps/particle neutron
+#/gps/particle ion
+#/gps/ion 19 40 0 0
+#/gps/energy 1.1 MeV
+#/gps/direction 1 0 0
+#/gun/particle mu- 
+#/gun/energy 1 GeV
+#/gun/particle gamma 
+#/gun/energy 1.8 MeV 
+/gun/particle neutron 
+/gun/energy 0.1 MeV 
+
+/vis/scene/endOfEventAction accumulate 50 
+#/muonFile/file muondata500.dat
+/run/beamOn 1000 
+

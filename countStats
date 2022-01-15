@@ -1,0 +1,48 @@
+#!/bin/sh
+
+TOPDIR=$1
+GREPSTRING=$2
+TEMPTOP=/nfs/slac/g/cdms/u02/villaa/
+
+cat ${TOPDIR}/batchOutput/*${GREPSTRING}* |grep 'file name:\|Subject:' |grep -B 1 'Subject:' |awk '
+BEGIN{
+  idnum=0;
+}
+{
+  if($1=="file"){
+    idnum=substr($3,match($3,"[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"),10);
+    files[idnum] = $3; 
+  }
+  else if($1=="Subject:"){
+    for(i=0;i<NF;i++){
+      if($i == "-ngen"){
+        ngen[idnum] = $(i+1);
+      } 
+    }
+    status[idnum] = $NF;
+  }
+}
+END{
+  for(i in files){
+    max = split(files[i],decompose,"/");
+    print decompose[max]"\t"ngen[idnum]"\t"status[idnum]"\t"i;
+  }
+}' | awk -v topdir=${TEMPTOP} '
+BEGIN{
+  count=0;
+}
+{
+  if($3=="Done"){
+    count+=$2;
+  }
+  else{
+   cmd = "tail -l "topdir"SLAC/"$1
+   (cmd |& getline line);
+   split(line,darr);
+   count+=darr[1]; 
+  }
+
+}
+END{
+  print count;
+}'

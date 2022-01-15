@@ -1,0 +1,31 @@
+/vis/scene/create
+
+# Create a scene handler for a specific graphics system
+# (Edit the next lines(s) to choose another graphics system
+/vis/open OGLIX
+#/vis/open OGL
+
+
+# Draw Scene
+#
+/vis/viewer/set/style surface
+/vis/viewer/set/upVector 0 1 0
+/vis/viewer/set/lightsThetaPhi 90 0 deg
+/vis/viewer/set/viewpointThetaPhi 90 93 deg
+#/vis/viewer/zoom 1.5
+
+
+#make some special colors
+/tracking/storeTrajectory 0
+/vis/scene/add/trajectories
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/setRGBA neutron 1 0.45 0.08 1
+/vis/scene/endOfEventAction accumulate
+
+#make a raytrace model
+#/vis/rayTracer/eyePosition 1 1 1 m
+#/vis/rayTracer/trace
+
+
+/run/beamOn 1 
+
