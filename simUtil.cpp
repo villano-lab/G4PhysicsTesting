@@ -84,7 +84,7 @@ bool insertEscapeInfo(std::string rootfile,std::string filename,bool force=false
 
   if(havetree && !force) return true;
 
-  TTree *oldt = f->Get("cascade");
+  TTree *oldt = (TTree*)f->Get("cascade");
   if(!oldt) return false;
   //make a tree
   TTree *t = new TTree("escapeInfo","escapeInfo");
