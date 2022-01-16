@@ -1,7 +1,15 @@
-int *getList(int n,string filename)
+#include <memory>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
+#include "TTree.h"
+#include "TFile.h"
+
+int *getList(int n,std::string filename)
 {
   //make a list of ints, default contents zero
-  int *out = (int*) malloc(n*sizeof(int));
+  int *out = (int*) std::malloc(n*sizeof(int));
 
   for(int i=0;i<n;i++){
     out[i]=0;
@@ -9,10 +17,10 @@ int *getList(int n,string filename)
 
   //read a file, and for each entry modify the contents
   //remember event numbers start at 1!
-  ifstream in(filename.c_str(),ios::in);
+  std::ifstream in(filename.c_str(),std::ios::in);
 
   if(!in){
-    cout << "File not present" << endl;
+    std::cout << "File not present" << std::endl;
     return out;
   }
 
@@ -25,10 +33,10 @@ int *getList(int n,string filename)
 
   return out;
 }
-void getListNew(int n,string filename,int *e,int *d,int *dI)
+void getListNew(int n,std::string filename,int *e,int *d,int *dI)
 {
   //make a list of ints, default contents zero
-  int *out = (int*) malloc(n*sizeof(int));
+  int *out = (int*) std::malloc(n*sizeof(int));
 
   for(int i=0;i<n;i++){
     out[i]=0;
@@ -36,11 +44,11 @@ void getListNew(int n,string filename,int *e,int *d,int *dI)
 
   //read a file, and for each entry modify the contents
   //remember event numbers start at 1!
-  ifstream in(filename.c_str(),ios::in);
+  std::ifstream in(filename.c_str(),std::ios::in);
 
   if(!in){
-    cout << "File not present" << endl;
-    return out;
+    std::cout << "File not present" << std::endl;
+    return;//out; // wasn't sure what the correct fix was here.
   }
 
   //allocate 
@@ -51,10 +59,10 @@ void getListNew(int n,string filename,int *e,int *d,int *dI)
 
   int ev,det,didInteract;
   //in>>ev;
-  string line;
+  std::string line;
   while(!getline(in,line).eof()){
     //cout << line << endl;
-    istringstream iss(line);
+    std::istringstream iss(line);
     iss >> ev >> det >> didInteract;
     //cout << ev << endl;
     e[ev-1] = ev;
@@ -66,7 +74,7 @@ void getListNew(int n,string filename,int *e,int *d,int *dI)
 
   return;
 }
-bool insertEscapeInfo(string rootfile,string filename,bool force=false)
+bool insertEscapeInfo(std::string rootfile,std::string filename,bool force=false)
 {
   //read the root file, find a Tree called metaData, overwrite it with new meta data
   //open the file and get the old tree
