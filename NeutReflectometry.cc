@@ -39,7 +39,7 @@
 
 G4int origevt;
 G4int lineno;
-G4int thisevent;
+// G4int thisevent;
 char desiredfile[100];
 
 //globals
