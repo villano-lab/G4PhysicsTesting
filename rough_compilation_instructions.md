@@ -1,3 +1,10 @@
+* *be sure to have the Geant4 environment sourced* this is the step I always forget, for me it was something like:
+
+. ~/install/geant4/geant4.10.07.p03-install/bin/geant4.sh    OR
+
+source ~/install/geant4/geant4.10.07.p03-install/bin/geant4.sh
+
+
 * Make a separate directory and call it G4PhysicsTest_build or something
 
 * run cmake like:
