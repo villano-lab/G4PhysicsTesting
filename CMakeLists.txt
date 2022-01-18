@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(G4PhysicsTesting)
 
-#set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_BUILD_TYPE None)
 message("cmake install prefix: ${CMAKE_INSTALL_PREFIX}")
