@@ -25,7 +25,7 @@
 #include <sys/time.h>
 #include <time.h>
 char filename[200];
-extern G4int thisevent;
+// extern G4int thisevent;
 
 
 NeutReflect_RunAction::NeutReflect_RunAction(NeutReflect_PrimaryGeneratorAction* generator)
@@ -56,7 +56,7 @@ NeutReflect_RunAction::~NeutReflect_RunAction()
 }
 void NeutReflect_RunAction::BeginOfRunAction(const G4Run* aRun)
 {
-  thisevent=0;
+  // thisevent=0;
 
   runN = aRun->GetRunID();
   if ( (runN % 1000 == 0) || (runN<100) ) 

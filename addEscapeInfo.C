@@ -1,7 +1,7 @@
-#include "simUtil.C"
+#include "simUtil.cpp"
 
 
-void addEscapeInfo(string rootfile,string filename,bool force=false)
+void addEscapeInfo(std::string rootfile,std::string filename,bool force=false)
 {
   insertEscapeInfo(rootfile,filename,force);
   return;
