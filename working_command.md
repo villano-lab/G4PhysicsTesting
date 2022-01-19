@@ -122,3 +122,9 @@ This is a command that works on my mac:
         }
 
 ```
+
+* NOTE: the following command produced nuclear recoils I think with a photoneutron source:
+
+```
+ ./NeutReflectometry -src 88Y -bias 10000 -d 1 -set 1 -ngen 100000 -otype txt -usestringlabel test -nomac -loc .
+```
