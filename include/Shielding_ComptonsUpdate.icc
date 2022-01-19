@@ -72,8 +72,10 @@
 #include "G4HadronElasticPhysicsHP.hh"
 #include "G4HadronElasticPhysicsLEND.hh"
 
-#include "G4DataQuestionaire.hh"
+//#include "G4DataQuestionaire.hh"
 #include "G4HadronPhysicsShielding.hh"
+
+using namespace CLHEP;
 
 //template<class T> TShielding_ComptonsUpdate<T>::TShielding_ComptonsUpdate(G4int ver):  T()
 template<class T> TShielding_ComptonsUpdate<T>::TShielding_ComptonsUpdate( G4int verbose, G4String LEN_model, 
@@ -81,7 +83,7 @@ template<class T> TShielding_ComptonsUpdate<T>::TShielding_ComptonsUpdate( G4int
 {
   // default cut value  (1.0mm) 
   // defaultCutValue = 1.0*CLHEP::mm;
-  G4DataQuestionaire it(photon, neutron, radioactive);
+  //G4DataQuestionaire it(photon, neutron, radioactive);
   G4cout << "<<< Geant4 Physics List simulation engine: Shielding_ComptonsUpdate"
          << HadrPhysVariant<< " 2.1"<<G4endl;
   G4cout <<G4endl;
@@ -120,7 +122,7 @@ template<class T> TShielding_ComptonsUpdate<T>::TShielding_ComptonsUpdate( G4int
   else if ( LEN_model == "LEND" ) 
   {
      this->RegisterPhysics( new G4HadronElasticPhysicsLEND(verbose,evaluation) );
-     G4DataQuestionaire itt(lend);
+     //G4DataQuestionaire itt(lend);
   }
   else 
   {
