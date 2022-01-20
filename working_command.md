@@ -128,3 +128,17 @@ This is a command that works on my mac:
 ```
  ./NeutReflectometry -src 88Y -bias 10000 -d 1 -set 1 -ngen 100000 -otype txt -usestringlabel test -nomac -loc .
 ```
+
+* I've upgraded the code to be able to run pure capture events (from thermal neutron primaries). Here are the commands for that (v0.1.1 and above)
+
+```
+./NeutReflectometry -src cascade -d -9 -set 2 -ngen 100000 -otype ascii -usestringlabel ArCapture -nomac -loc .
+```
+
+```
+./NeutReflectometry -src cascade -d -8 -set 2 -ngen 100000 -otype ascii -usestringlabel SiCapture -nomac -loc .
+```
+
+```
+./NeutReflectometry -src cascade -d -7 -set 2 -ngen 100000 -otype ascii -usestringlabel GeCapture -nomac -loc .
+```

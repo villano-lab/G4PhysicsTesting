@@ -39,7 +39,7 @@ decayer(dec),
 rootfile(rfile)
 {
   //initialize TTree pointer to NULL
-  t = NULL;
+  //t = NULL;
 
   //finalpathlength initialize
   finalpathlength = -1.0;
@@ -110,8 +110,8 @@ rootfile(rfile)
 }
 NeutReflect_PrimaryGeneratorAction::~NeutReflect_PrimaryGeneratorAction()
 {
-  if(decayer=="cascade" && rootfile=="NULL")
-    f->Close();
+  //if(decayer=="cascade" && rootfile=="NULL")
+  //  f->Close();
   delete particleGun;
 }
 void NeutReflect_PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
