@@ -287,7 +287,7 @@ void NeutReflect_PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       //set the particle position
       particleGun->SetParticlePosition(G4ThreeVector(srcr*cos(srcthet)*mm,srcr*sin(srcthet)*mm,srcz*mm).transform(*xrot));
     }
-    else if(Ndet->GetDesignNo() == -9){
+    else if((Ndet->GetDesignNo() == -9) || (Ndet->GetDesignNo()==-14)){
       G4double srcr,srcthet,srcphi;
       //generate uniform in costhet
       srcthet=-1+2*G4UniformRand();
