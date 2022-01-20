@@ -142,3 +142,16 @@ This is a command that works on my mac:
 ```
 ./NeutReflectometry -src cascade -d -7 -set 2 -ngen 100000 -otype ascii -usestringlabel GeCapture -nomac -loc .
 ```
+
+*  some command-line filtration stuff:
+
+```
+(base) Anthonys-MacBook-Pro-2:G4PhysicsTesting_build villaa$ cat ./NROUT/NeutReflectDiag6_Sourcecascade_neutron_SiCapture_000_00*.txt |awk '{if($5==29014 && $6>0){print $5" "$6" "$7}}' |awk 'END{print NR}'
+5080
+(base) Anthonys-MacBook-Pro-2:G4PhysicsTesting_build villaa$ cat ./NROUT/NeutReflectDiag6_Sourcecascade_neutron_SiCapture_000_00*.txt |awk '{if($5==30014 && $6>0){print $5" "$6" "$7}}' |awk 'END{print NR}'
+1449
+(base) Anthonys-MacBook-Pro-2:G4PhysicsTesting_build villaa$ cat ./NROUT/NeutReflectDiag6_Sourcecascade_neutron_SiCapture_000_00*.txt |awk '{if($5==31014 && $6>0){print $5" "$6" "$7}}' |awk 'END{print NR}'
+62
+(base) Anthonys-MacBook-Pro-2:G4PhysicsTesting_build villaa$ cat ./NROUT/NeutReflectDiag6_Sourcecascade_neutron_SiCapture_000_00*.txt |awk '{if($5==32014 && $6>0){print $5" "$6" "$7}}' |awk 'END{print NR}'
+0
+```
