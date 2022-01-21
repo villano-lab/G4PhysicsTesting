@@ -34,6 +34,7 @@ private:
   NeutReflect_StdHitsCollection* stdCollection;
   G4int genericNb;
 
+  G4bool isNCap(G4Track* track,G4Step *aStep);
   NeutReflect_PrimaryGeneratorAction *Ngen;
 
 };

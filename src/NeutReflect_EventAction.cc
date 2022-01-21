@@ -141,7 +141,7 @@ void NeutReflect_EventAction::EndOfEventAction(const G4Event* evt)
 	       // modify the memory
 	       dataOut->getData()[1-1] = evt->GetEventID()+1;
                NeutReflect_EventInfo *anEventInfo = (NeutReflect_EventInfo*) evt->GetUserInformation();
-	       dataOut->getData()[18-1] = anEventInfo->GetBeLength();
+	       //dataOut->getData()[18-1] = anEventInfo->GetBeLength();
 
 	       // add this data to the matrix array
 	       dataOut->addData();
