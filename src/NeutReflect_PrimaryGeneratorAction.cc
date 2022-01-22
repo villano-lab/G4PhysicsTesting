@@ -38,6 +38,9 @@ xnbias(bias),
 decayer(dec),
 rootfile(rfile)
 {
+  //initialize TTree pointer to NULL
+  //t = NULL;
+
   //finalpathlength initialize
   finalpathlength = -1.0;
   
@@ -107,8 +110,8 @@ rootfile(rfile)
 }
 NeutReflect_PrimaryGeneratorAction::~NeutReflect_PrimaryGeneratorAction()
 {
-  if(decayer=="cascade" && rootfile=="NULL")
-    f->Close();
+  //if(decayer=="cascade" && rootfile=="NULL")
+  //  f->Close();
   delete particleGun;
 }
 void NeutReflect_PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
@@ -263,7 +266,7 @@ void NeutReflect_PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     particleGun->SetParticlePosition(G4ThreeVector(0.0*m,0.0*m,0.0*m));
     particleGun->SetParticleDefinition(G4Gamma::Definition()); 
   }
-  else if(sourceType=="cascade" && t){
+  else if(sourceType=="cascade"){
     
     //define angle in case need it
     std::vector<G4double> angles;
@@ -284,7 +287,7 @@ void NeutReflect_PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       //set the particle position
       particleGun->SetParticlePosition(G4ThreeVector(srcr*cos(srcthet)*mm,srcr*sin(srcthet)*mm,srcz*mm).transform(*xrot));
     }
-    else if(Ndet->GetDesignNo() == -9){
+    else if((Ndet->GetDesignNo() == -9) || (Ndet->GetDesignNo()==-14)){
       G4double srcr,srcthet,srcphi;
       //generate uniform in costhet
       srcthet=-1+2*G4UniformRand();
@@ -382,35 +385,46 @@ void NeutReflect_PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     }
     
     
+    if(t){
+      //get the energies of the cascade if the times are OK
+      for(int i=0;i<ncascade;i++){
+        //the decay time is actually the previous time in the chain
+        double decaytime;
+        if(i==0)
+          decaytime=0;
+        else
+          decaytime=i-1;
 
-    //get the energies of the cascade if the times are OK
-    for(int i=0;i<ncascade;i++){
-      //the decay time is actually the previous time in the chain
-      double decaytime;
-      if(i==0)
-        decaytime=0;
-      else
-	decaytime=i-1;
-
-      if(decaytime<1e12){ //1ms in fs
-        angles = GenerateRandomDirection();
-        particleGun->SetParticleEnergy(Eg[i]);
-        particleGun->SetParticleMomentumDirection(G4ThreeVector(angles[2]*cos(angles[0]),angles[2]*sin(angles[0]),angles[1]).transform(*xrot));
-        particleGun->GeneratePrimaryVertex(anEvent);
+        if(decaytime<1e12){ //1ms in fs
+          angles = GenerateRandomDirection();
+          particleGun->SetParticleEnergy(Eg[i]);
+          particleGun->SetParticleMomentumDirection(G4ThreeVector(angles[2]*cos(angles[0]),angles[2]*sin(angles[0]),angles[1]).transform(*xrot));
+          particleGun->GeneratePrimaryVertex(anEvent);
+        }
       }
+
+      //check if the event is past the end of the file, if so, abort
+      if(rootnevent>=t->GetEntries()-1){
+       //hard abort
+         G4cout << "about to abort" << G4endl;
+         G4RunManager::GetRunManager()->AbortRun(true); 
+         anEvent->SetEventAborted();
+      }
+
+      //set up for next event
+      rootnevent++;
+      t->GetEntry(rootnevent);
+    }
+    //when we want cascade but supplied no root input--generate thermal neutrons inside the material
+    else{ 
+      angles = GenerateRandomDirection();
+      particleGun->SetParticleDefinition(G4Neutron::Definition()); 
+      particleGun->SetParticleEnergy(0.0254e-6);
+      particleGun->SetParticleMomentumDirection(G4ThreeVector(angles[2]*cos(angles[0]),angles[2]*sin(angles[0]),angles[1]).transform(*xrot));
+      particleGun->GeneratePrimaryVertex(anEvent);
+
     }
 
-    //check if the event is past the end of the file, if so, abort
-    if(rootnevent>=t->GetEntries()-1){
-     //hard abort
-       G4cout << "about to abort" << G4endl;
-       G4RunManager::GetRunManager()->AbortRun(true); 
-       anEvent->SetEventAborted();
-    }
-
-    //set up for next event
-    rootnevent++;
-    t->GetEntry(rootnevent);
   }
       
   

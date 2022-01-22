@@ -95,6 +95,7 @@ private:
   G4Material* Steel;
   G4Material* Air;
   G4Material* Argon;
+  G4Material* Neon;
   G4Material* Aluminium;
 
   G4double BeR;
@@ -151,6 +152,7 @@ private:
   void ConstructR68SiDet(G4VPhysicalVolume*,G4double dist=400.0);
   void ConstructSNOLABDet(G4VPhysicalVolume*,G4String name, G4String mat="Ge",G4double dist=400.0);
   void ConstructArDet(G4VPhysicalVolume*,G4double dist=400.0);
+  void ConstructNeDet(G4VPhysicalVolume*,G4double dist=400.0);
   void ConstructGenericDet(G4VPhysicalVolume*,G4Material*,G4String name="gendet",G4double dist=400.0);
   void ConstructSimpleVessel(G4VPhysicalVolume*,G4double vthk=400.0,
 						G4double vrad=146.2,

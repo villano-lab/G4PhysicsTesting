@@ -223,10 +223,11 @@ int main(int argc, char** argv) {
   // set manditory user action class
   // UserAction Classes
   NeutReflect_PrimaryGeneratorAction* myPrimaryEventGenerator;
-  if(cascaderootfile=="NULL")
-    myPrimaryEventGenerator=new NeutReflect_PrimaryGeneratorAction(xnbias,source);
-  else
-    myPrimaryEventGenerator=new NeutReflect_PrimaryGeneratorAction(xnbias,"cascade",cascaderootfile);
+  //if(cascaderootfile=="NULL")
+  //  myPrimaryEventGenerator=new NeutReflect_PrimaryGeneratorAction(xnbias,source);
+  //else
+  //  myPrimaryEventGenerator=new NeutReflect_PrimaryGeneratorAction(xnbias,"cascade",cascaderootfile);
+  myPrimaryEventGenerator=new NeutReflect_PrimaryGeneratorAction(xnbias,source,cascaderootfile);
   runManager->SetUserAction(myPrimaryEventGenerator);
   NeutReflect_RunAction* pRunAction = new NeutReflect_RunAction(myPrimaryEventGenerator);
 
