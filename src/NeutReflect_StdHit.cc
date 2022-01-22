@@ -21,7 +21,7 @@ G4Allocator<NeutReflect_StdHit> NeutReflect_StdHitAllocator;
 
 NeutReflect_StdHit::NeutReflect_StdHit() 
 {
-  dataVector = new G4double[18];
+  dataVector = new G4double[22];
 }
 NeutReflect_StdHit::NeutReflect_StdHit(const NeutReflect_StdHit& right) : G4VHit()
 {

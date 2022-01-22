@@ -49,15 +49,15 @@ NeutReflect_DataStorage::NeutReflect_DataStorage(G4String filename, G4int run, G
   sprintf(myNames[0], "EV"); sprintf(myNames[1], "DT"); sprintf(myNames[2], "TS");
   sprintf(myNames[3], "P"); sprintf(myNames[4], "Type"); sprintf(myNames[5], "E1");
   sprintf(myNames[6], "D3");
-  sprintf(myNames[7], "X1"); sprintf(myNames[8], "Y1"); sprintf(myNames[9], "Z1");
+  sprintf(myNames[7], "PX3"); sprintf(myNames[8], "PY3"); sprintf(myNames[9], "PZ3");
   sprintf(myNames[10], "X3"); sprintf(myNames[11], "Y3"); sprintf(myNames[12], "Z3");
-  sprintf(myNames[13], "PX"); sprintf(myNames[14], "PY"); sprintf(myNames[15], "PZ");
-  sprintf(myNames[16], "time");
-  sprintf(myNames[17], "origevt");
-
+  sprintf(myNames[13], "time3");
+  sprintf(myNames[14], "PX1"); sprintf(myNames[15], "PY1"); sprintf(myNames[16], "PZ1");
+  sprintf(myNames[17], "X1"); sprintf(myNames[18], "Y1"); sprintf(myNames[19], "Z1");
+  sprintf(myNames[20], "time1");
+  sprintf(myNames[21], "nCap"); 
   for (int kk=0; kk<N_DATA; kk++)
     VariableNames[kk] = myNames[kk];
-
 
 #ifdef ASCIIOUT
 
@@ -124,15 +124,16 @@ void NeutReflect_DataStorage::writeArray()
   sprintf(myNames[0], "EV"); sprintf(myNames[1], "DT"); sprintf(myNames[2], "TS");
   sprintf(myNames[3], "P"); sprintf(myNames[4], "Type"); sprintf(myNames[5], "E1");
   sprintf(myNames[6], "D3");
-  sprintf(myNames[7], "X1"); sprintf(myNames[8], "Y1"); sprintf(myNames[9], "Z1");
+  sprintf(myNames[7], "PX3"); sprintf(myNames[8], "PY3"); sprintf(myNames[9], "PZ3");
   sprintf(myNames[10], "X3"); sprintf(myNames[11], "Y3"); sprintf(myNames[12], "Z3");
-  sprintf(myNames[13], "PX"); sprintf(myNames[14], "PY"); sprintf(myNames[15], "PZ");
-  sprintf(myNames[16], "time");
-  sprintf(myNames[17], "origevt");
+  sprintf(myNames[13], "time3");
+  sprintf(myNames[14], "PX1"); sprintf(myNames[15], "PY1"); sprintf(myNames[16], "PZ1");
+  sprintf(myNames[17], "X1"); sprintf(myNames[18], "Y1"); sprintf(myNames[19], "Z1");
+  sprintf(myNames[20], "time1");
+  sprintf(myNames[21], "nCap"); 
 
   for (int kk=0; kk<N_DATA; kk++)
     VariableNames[kk] = myNames[kk];
-
 
 
 #ifdef ASCIIOUT

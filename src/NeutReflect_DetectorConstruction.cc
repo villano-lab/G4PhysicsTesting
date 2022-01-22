@@ -215,6 +215,14 @@ void NeutReflect_DetectorConstruction::DefineMaterials()
         Argon = new G4Material(name="Argon", density, nel=1, kStateGas);
         Argon->AddElement(elAr, 1.0);
  
+        //Neon
+        a = 20.18*g/mole;
+        G4Element* elNe = new G4Element(name="Neon", symbol="Ne", iz=10.0, a);
+        density = 0.89994*mg/cm3;
+        //STP is default so don't have to supply temp and press
+        Neon = new G4Material(name="Neon", density, nel=1, kStateGas);
+        Neon->AddElement(elNe, 1.0);
+
         //Steel (i.e. iron)
         a=55.845*g/mole;
         density=7.874*g/cm3;
@@ -499,6 +507,12 @@ G4VPhysicalVolume* NeutReflect_DetectorConstruction::Construct()
 	  //just a Si detector centered at zero
           ConstructR68SiDet(physicalWorld,0.0);
         }
+        else if(DesignNo==-14){
+          //construct Diag12
+	  //just a Ne detector centered at zero
+          ConstructNeDet(physicalWorld,0.0);
+        }
+        
 	
 	
 	
@@ -1497,6 +1511,41 @@ void NeutReflect_DetectorConstruction::ConstructArDet(G4VPhysicalVolume *world,G
         //make this sensitive
         if(ConstructGenericSensitiveInt>0){
           ConstructGenericSensitive(logicalArSphere,"ArDet");
+        }
+        return;
+}
+void NeutReflect_DetectorConstruction::ConstructNeDet(G4VPhysicalVolume *world,G4double dist)
+{
+        //only use rotation if parent volume is null (highest)
+        G4RotationMatrix *thisrot;
+        if(world->GetName()=="world_P")
+          thisrot=xrot;
+        else
+          thisrot=nullrot;
+
+	//make an argon sphere of 1 m at STP
+	//FIXME hardcoded size
+	G4Sphere* neSphere = new G4Sphere("neSphere_S",0.0,1000.0,0.0,2*pi,0.0,pi);
+	G4LogicalVolume* logicalNeSphere = new G4LogicalVolume(neSphere,Neon,"NeSph_L",0,0,0);
+	G4VPhysicalVolume* cylinderNeWorld = new G4PVPlacement(thisrot,
+								G4ThreeVector(0,-dist,0),
+								"NeSph_P",
+								logicalNeSphere,
+								world,
+								false,
+								0);
+
+	// Visualization attributes
+	G4VisAttributes* VisAttNeSph = new G4VisAttributes(G4Colour(255./255.,127./255.,80./255.));
+	VisAttNeSph->SetForceSolid(false);
+	//VisAttNeSph->SetForceWireframe(true);  //I want a Wireframe of the me
+	logicalNeSphere->SetVisAttributes(VisAttNeSph);  
+	// Make Invisible
+	//logicalCylinder->SetVisAttributes(G4VisAttributes::Invisible);
+
+        //make this sensitive
+        if(ConstructGenericSensitiveInt>0){
+          ConstructGenericSensitive(logicalNeSphere,"NeDet");
         }
         return;
 }

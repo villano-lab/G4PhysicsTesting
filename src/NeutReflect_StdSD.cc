@@ -19,6 +19,7 @@
 #include "G4SDManager.hh"
 #include "G4ios.hh"
 
+#include "G4Neutron.hh"
 #include "NeutReflect_StdSD.hh"
 #include "NeutReflect_PrimaryGeneratorAction.hh"
 extern G4int origevt;
@@ -71,23 +72,33 @@ G4bool NeutReflect_StdSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist)
 
   dataVector[1-1]  = 0; // Is not set in this function
   dataVector[2-1]  = 1000 + genericNb; // Generic Detector Number
-  dataVector[3-1]  = 1e5 * aStep->GetTrack()->GetTrackID() +  aStep->GetTrack()->GetCurrentStepNumber();
+  dataVector[3-1]  = 1e5 * aStep->GetTrack()->GetTrackID() +
+                           aStep->GetTrack()->GetCurrentStepNumber();
   dataVector[4-1]  = 1e5 * aStep->GetTrack()->GetParentID();
   dataVector[5-1]  = pid; // Particle ID
   dataVector[6-1]  = aStep->GetPreStepPoint()->GetKineticEnergy();
   dataVector[7-1]  = aStep->GetTotalEnergyDeposit();
-  dataVector[8-1]  = aStep->GetPreStepPoint()->GetPosition().x();
-  dataVector[9-1]  = aStep->GetPreStepPoint()->GetPosition().y();
-  dataVector[10-1]  = aStep->GetPreStepPoint()->GetPosition().z();
+
+  dataVector[8-1]  = aStep->GetPostStepPoint()->GetMomentum().x();
+  dataVector[9-1]  = aStep->GetPostStepPoint()->GetMomentum().y();
+  dataVector[10-1] = aStep->GetPostStepPoint()->GetMomentum().z();
   dataVector[11-1] = aStep->GetPostStepPoint()->GetPosition().x();
   dataVector[12-1] = aStep->GetPostStepPoint()->GetPosition().y();
   dataVector[13-1] = aStep->GetPostStepPoint()->GetPosition().z();
-  dataVector[14-1]  = aStep->GetPreStepPoint()->GetMomentumDirection().x();
-  dataVector[15-1]  = aStep->GetPreStepPoint()->GetMomentumDirection().y();
-  dataVector[16-1]  = aStep->GetPreStepPoint()->GetMomentumDirection().z();
-  dataVector[17-1] = aStep->GetPostStepPoint()->GetGlobalTime();
-  dataVector[18-1]=  Ngen->GetFinalPathLength();
+  dataVector[14-1] = aStep->GetPostStepPoint()->GetGlobalTime();
 
+  dataVector[15-1] = aStep->GetPreStepPoint()->GetMomentum().x();
+  dataVector[16-1] = aStep->GetPreStepPoint()->GetMomentum().y();
+  dataVector[17-1] = aStep->GetPreStepPoint()->GetMomentum().z();
+  dataVector[18-1] = aStep->GetPreStepPoint()->GetPosition().x();
+  dataVector[19-1] = aStep->GetPreStepPoint()->GetPosition().y();
+  dataVector[20-1] = aStep->GetPreStepPoint()->GetPosition().z();
+  dataVector[21-1] = aStep->GetPreStepPoint()->GetGlobalTime();
+
+  //get some process information
+  G4Track* track = aStep->GetTrack();
+
+  dataVector[22-1] = isNCap(track,aStep);
 
   /*
      1. EV (starts with 1)
@@ -138,4 +149,21 @@ void NeutReflect_StdSD::EndOfEvent(G4HCofThisEvent* HCE)
 	   << "\n" << G4endl;
 
   }
+}
+G4bool NeutReflect_StdSD::isNCap(G4Track *track, G4Step *aStep){
+
+  static const G4ParticleDefinition* theNeutron = G4Neutron::Definition();
+
+  // Must be a neutron which has been stopped by a nucleus
+  if (track->GetDefinition() != theNeutron) return false;
+  if (track->GetTrackStatus() != fStopAndKill) return false;
+  
+  // Only tag if there were no neutron secondaries (identifies a capture)
+  const G4TrackVector* secondaries = aStep->GetSecondary();
+  size_t nsecs = secondaries->size();
+  for(size_t i=0; i < nsecs; ++i) {    //quicker to search in reverse order
+    if ((*secondaries)[nsecs-1-i]->GetDefinition() == theNeutron) return false;
+  }
+
+  return true;
 }
