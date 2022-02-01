@@ -3,13 +3,15 @@ try:
     import uproot
     defaultmethod = 'root'
 except(ModuleNotFoundError):
-    print('Dependency `uproot` for `hist` not found. Only text-based files will be available.')
+    raise Warning('Dependency `uproot` for `hist` not found. Only text-based files will be available.')
     defaultmethod = 'csv'
 try:
-    import pandas
+    import pandas as pd
 except(ModuleNotFoundError):
     if defaultmethod == 'csv': #If uproot also didn't exist.
         raise ModuleNotFoundError("Local module `hist.py` found neither `pandas` nor `uproot`. Please install one of these two dependencies to continue.")
+    else:
+        raise Warning('Dependency `pandas` for `hist` not found. Only ROOT files will be available.')
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -72,7 +74,17 @@ def histogramable(file,binsize=8,binmin=0,binmax=425,labels=[],model='Lindhard',
         c_id = cas.array('cid')
         totalpoints = cas.numentries
     elif method=='csv':
-        print('Placeholder function. Sorry!')
+        #x = pd.read_csv(file) #Fewer steps removed
+        cas = pd.read_csv(file)
+        en = cas['E1'].values
+        en_dep = cas['D3'].values
+        c_id = cas['EV'].values
+        if len(set(c_id)) < len(c_id):
+            raise ValueError("Hey, there were duplicate entries in the 'EV' column. I didn't really think that would happen so I didn't write this code. But, didn't want it to give wrong answers. So here's an error message.")
+        else: #If there's one per, then we can go on restructuring our lists like this.
+            en     = np.asarray([[value] for value in en])
+            en_dep = np.asarray([[value] for value in en_dep])
+        totalpoints = cas.shape[0]
     else:
         raise ValueError("Bad value for `method`. Available methods: `root`, `csv`.")
     if resolution=='normal':
@@ -93,7 +105,7 @@ def histogramable(file,binsize=8,binmin=0,binmax=425,labels=[],model='Lindhard',
     else:
         print("Unrecognized. Available resolutions: normal, none, offset, constant")
     maxcidlength = 0
-    for i in range(max(c_id)):
+    for i in set(c_id):
         if len(c_id[c_id==i]) > maxcidlength:
             maxcidlength = len(c_id[c_id==i])
     plottable = np.zeros([max(c_id)+1,maxcidlength]) 

@@ -35,8 +35,10 @@ print("# Number of entries before pruning:",len(infilecontents.index))
 outfilecontents = pd.DataFrame() #initialize this so I can add to it.
 for value in infilecontents.query('nCap == 1')['EV']:
     outfilecontents = pd.concat([outfilecontents,                                                          #append something to the output contents.
-        infilecontents[infilecontents.query('nCap == 1 and EV == @value').index[0]:].query('EV == @value') #Include the whole event, starting from the initial capture
+        infilecontents[infilecontents.query('nCap == 1 and EV == @value').index[0]:].query('EV == @value and P == 100000 and Type > 20000 and E1 > 1e-6') #Include nuclear recoils that are in the same event, are children of the capture, and have an energy > 1eV (anything lower won't be detected anyway).
     ])
+outfilecontents = outfilecontents.drop(columns='nCap') #nCap column is no longer needed.
+outfilecontents = outfilecontents.reindex()            #Reset the index 
 
 # pruning done, back to printing. --------------------------------------
 print("# Capture events found:",len(infilecontents.query('nCap == 1').index)) #Print this before I change it
