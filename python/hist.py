@@ -34,8 +34,10 @@ def f(model,material='Si',k=0.178,q=0.00075):
             return lin.getLindhardGe_k(k)
     elif model=='Sorenson':
         return lambda Er: R68y.ySor(Er,k,0.00075)
+    elif model=='None':
+        return lambda Er: 1
     else:
-        print("Unrecognized. Available models: Lindhard, Sorenson")
+        print("Unrecognized. Available models: Lindhard, Sorenson, None")
 
 #Get total deposit for the given cascade:
 def Eitot(i,l,en,en_dep,c_id,model,material='Si'): #Get yield total from a given cid and k, and choose an instance of that cascade
@@ -82,14 +84,14 @@ def histogramable(file,binsize=8,binmin=0,binmax=425,labels=[],model='Lindhard',
         if len(set(c_id)) < len(c_id):
             raise ValueError("Hey, there were duplicate entries in the 'EV' column. I didn't really think that would happen so I didn't write this code. But, didn't want it to give wrong answers. So here's an error message.")
         else: #If there's one per, then we can go on restructuring our lists like this.
-            en     = np.asarray([[value] for value in en])
-            en_dep = np.asarray([[value] for value in en_dep])
+            en     = np.asarray([[value*1e6] for value in en])     #and unit conversion
+            en_dep = np.asarray([[value*1e6] for value in en_dep]) #1 MeV -> 1e6 eV
         totalpoints = cas.shape[0]
     else:
         raise ValueError("Bad value for `method`. Available methods: `root`, `csv`.")
     if resolution=='normal':
         resolution = lambda E: res(E,scalefactor)
-    elif resolution =='none':
+    elif resolution ==None:
         resolution = lambda E: 0 #Define as function of E to keep code down to one line @ 81
     elif resolution == 'offset':
         if val is None:
@@ -131,3 +133,4 @@ def histogramable(file,binsize=8,binmin=0,binmax=425,labels=[],model='Lindhard',
     print(len(a_list[0]))
     return xc,n_rel,n_sim
 """
+
