@@ -1,0 +1,11 @@
+cat Nefile.txt |awk 'BEGIN{ev=0;FS=","}{ev=$1; d3[ev]+=$7;}END{for(i in d3){print d3[i]}}' > netest.txt
+
+cat Nefile.txt |awk 'BEGIN{ev=0;FS=","}{ev=$1; d3[ev]+=$7;a[ev]=$1;b[ev]=$2;c[ev]=$3;d[ev]=$4;e[ev]=$5;f[ev]=$6;h[ev]=$8}END{for(i in d3){print a[i]","b[i]","c[i]","d[i]","e[i]","f[i]","d3[i]","h[i]}}'
+
+cat Nefile.txt |awk 'BEGIN{ev=0;FS=","}{if($2!="EV"){ev=$1; d3[ev]+=$7;a[ev]=$1;b[ev]=$2;c[ev]=$3;d[ev]=$4;e[ev]=$5;f[ev]=$6;h[ev]=$8}}END{for(i in d3){print a[i]","b[i]","c[i]","d[i]","e[i]","f[i]","d3[i]","h[i]}}' |sort -r > Nefile_summed.txt 
+
+cat Nefile.txt |awk 'BEGIN{ev=0;FS=","}{if($2!="EV"){ev=$1; d3[ev]+=$7;a[ev]=$1;b[ev]=$2;c[ev]=$3;d[ev]=$4;e[ev]=$5;f[ev]=$6;h[ev]=$8}}END{for(i in d3){print a[i]","b[i]","c[i]","d[i]","e[i]","f[i]","d3[i]","h[i]}}' |sort -h -t "," > Nefile_summed.txt 
+
+cat Arfile.txt |awk 'BEGIN{ev=0;FS=","}{if($2!="EV"){ev=$1; d3[ev]+=$7;a[ev]=$1;b[ev]=$2;c[ev]=$3;d[ev]=$4;e[ev]=$5;f[ev]=$6;h[ev]=$8}}END{for(i in d3){print a[i]","b[i]","c[i]","d[i]","e[i]","f[i]","d3[i]","h[i]}}' |sort -h -t "," |awk 'BEGIN{print ",EV,TS,P,Type,E1,D3,time1"}{print $0}' > Arfile_summed.txt 
+
+ cat Arfile.txt |awk 'BEGIN{ev=0;FS=",";off=0;prev=0}{if($2!="EV"){prev=$1; if($1<prev){off+=ev} ev=$1+off; d3[ev]+=$7;a[ev]=$1;b[ev]=$2;c[ev]=$3;d[ev]=$4;e[ev]=$5;f[ev]=$6;h[ev]=$8}}END{for(i in d3){print i","b[i]","c[i]","d[i]","e[i]","f[i]","d3[i]","h[i]}}' |sort -h -t "," |awk 'BEGIN{print ",EV,TS,P,Type,E1,D3,time1"}{print $0}' > Arfile_summed.txt 
