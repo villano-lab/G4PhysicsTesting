@@ -15,6 +15,7 @@ except(ModuleNotFoundError):
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+from itertools import groupby
 sys.path.append('../')
 #print(sys.path)
 import nc_kinematics as nck
@@ -40,10 +41,14 @@ def f(model,material='Si',k=0.178,q=0.00075):
         print("Unrecognized. Available models: Lindhard, Sorenson, None")
 
 #Get total deposit for the given cascade:
-def Eitot(i,l,en,en_dep,c_id,model,material='Si'): #Get yield total from a given cid and k, and choose an instance of that cascade
+def Eitot(i,l,en,en_dep,c_id,model,material='Si',method=defaultmethod): #Get yield total from a given cid and k, and choose an instance of that cascade
     #Determine values
-    energy = en[c_id==i][l]
-    delEnergy = en_dep[c_id==i][l]
+    if method == 'root':
+        energy = en[c_id==i][l]
+        delEnergy = en_dep[c_id==i][l]
+    elif method == 'csv':
+        energy = en[i][l]
+        delEnergy = en_dep[i][l]
     #Create array and iterate
     returnval = 0
     j = 0
@@ -82,8 +87,23 @@ def histogramable(file,binsize=8,binmin=0,binmax=425,labels=[],model='Lindhard',
         en_dep = cas['D3'].values
         c_id = cas['EV'].values
         if len(set(c_id)) < len(c_id):
-            raise ValueError("Hey, there were duplicate entries in the 'EV' column. I didn't really think that would happen so I didn't write this code. But, didn't want it to give wrong answers. So here's an error message.")
-        else: #If there's one per, then we can go on restructuring our lists like this.
+            #Set up structure
+            en_new = []
+            en_dep_new = []
+            j = 0
+            en_new.append([en[0]])
+            en_dep_new.append([en_dep[0]])
+            for i in range(1,len(c_id)):  #Don't check the 0th entry against the last!
+                if c_id[i] == c_id[i-1]:#Check if they're twice in a row.
+                    en_new[j].append(en[i])
+                    en_dep_new[j].append(en_dep[i])
+                else: #If we're done with this c_id, then iterate to the next one.
+                    en_new.append([en[i]])
+                    en_dep_new.append([en_dep[i]])
+            en = np.asarray(en_new,dtype='object')
+            en_dep = np.asarray(en_dep_new,dtype='object')
+        else:
+        #If there's one per, then we can go on restructuring our lists like this - much more efficient.
             en     = np.asarray([[value*1e6] for value in en])     #and unit conversion
             en_dep = np.asarray([[value*1e6] for value in en_dep]) #1 MeV -> 1e6 eV
         totalpoints = cas.shape[0]
@@ -111,11 +131,19 @@ def histogramable(file,binsize=8,binmin=0,binmax=425,labels=[],model='Lindhard',
         if len(c_id[c_id==i]) > maxcidlength:
             maxcidlength = len(c_id[c_id==i])
     plottable = np.zeros([max(c_id)+1,maxcidlength]) 
-    for i in range(max(c_id)+1):
-        for j in range(len(c_id[c_id==i])):                   #Up to the number of events,
-            plottable[i,j] = Eitot(i,j,en,en_dep,c_id,model,material)  #Calculate the energy deposit.
-        for j in range(len(c_id[c_id==i]),len(c_id[c_id==0])):#For any leftover points,
-            plottable[i,j] = np.nan                           #The value is not a number
+    if method == 'root':
+        for i in range(max(c_id)+1):
+            for j in range(len(c_id[c_id==i])):                   #Up to the number of events,
+                plottable[i,j] = Eitot(i,j,en,en_dep,c_id,model,material,method='root')  #Calculate the energy deposit.
+            for j in range(len(c_id[c_id==i]),len(c_id[c_id==0])):#For any leftover points,
+                plottable[i,j] = np.nan                           #The value is not a number
+    elif method == 'csv':
+        for i in set(c_id):
+            k = np.where(c_id==i)[0]
+            for j in range(len(c_id[c_id==k])):
+                plottable[k,j] = Eitot(k,j,en,en_dep,c_id,model,material,method='csv')
+            for j in range(len(c_id[c_id==i]),len(c_id[c_id==0])):
+                plottable[k,j] = np.nan
     a_list = []
     for i in range(max(c_id)):
         a_list.append(plottable[i,:])
