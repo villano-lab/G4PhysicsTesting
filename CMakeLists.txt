@@ -117,6 +117,7 @@ target_link_libraries(NeutReflectometry ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 #
 set(G4PHYSTEST_SCRIPTS
   macros/srcCloseup.mac
+  macros/srcTestGeom.mac
   macros/srcRayTrace.mac
   )
 
