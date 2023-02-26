@@ -1,10 +1,12 @@
 
 #----------------------------------------------------------------------------
 # Setup the project
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.8...3.21)
+if(${CMAKE_VERSION} VERSION_LESS 3.12)
+  cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
+endif()
 project(G4PhysicsTesting)
 
-set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_BUILD_TYPE None)
 message("cmake install prefix: ${CMAKE_INSTALL_PREFIX}")
@@ -52,16 +54,39 @@ include_directories(${ROOT_INCLUDE_DIR})
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
-# You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
+# You can set G4VIS_USE to OFF via the command line or ccmake/cmake-gui
 # to build a batch mode only executable
 #
-option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
-if(WITH_GEANT4_UIVIS)
+option(G4VIS_USE "Build example with Geant4 UI and Vis drivers" ON)
+if(G4VIS_USE)
   message("using visualization")
+  add_definitions(-DG4VIS_USE)
+  get_directory_property(_vars_before VARIABLES)
   find_package(Geant4 REQUIRED ui_all vis_all)
+  get_directory_property(_vars VARIABLES)
 else()
+  message("NOT using visualization")
+  get_directory_property(_vars_before VARIABLES)
   find_package(Geant4 REQUIRED)
+  get_directory_property(_vars VARIABLES)
 endif()
+
+if (Geant4_FOUND)
+    message(STATUS "Libraries for Geant4 found")
+    message(STATUS "Input directory: " ${Geant4_DIR})
+    message(STATUS "Package Version: " ${Geant4_VERSION})
+    message(STATUS "Include DIRS: " ${Geant4_INCLUDE_DIRS})
+else()
+    message(FATAL_ERROR "Failed to find Geant4.")
+endif()
+
+
+list(REMOVE_ITEM _vars _vars_before ${_vars_before})
+foreach(_var IN LISTS _vars)
+    message(STATUS "${_var} = ${${_var}}")
+endforeach()
+
+
 #----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
 # Setup include directory for this project
@@ -93,19 +118,15 @@ target_link_libraries(NeutReflectometry ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 set(G4PHYSTEST_SCRIPTS
   macros/srcCloseup.mac
   macros/srcRayTrace.mac
-  macros/pubeTest.mac
-  macros/pube_coin.mac
-  sources/pube.dat
-  sources/pube_skim.dat
   )
 
-#foreach(_script ${G4PHYSTEST_SCRIPTS})
-#  configure_file(
-#    ${PROJECT_SOURCE_DIR}/${_script}
-#    ${PROJECT_BINARY_DIR}/${_script}
-#    COPYONLY
-#    )
-#endforeach()
+foreach(_script ${G4PHYSTEST_SCRIPTS})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/${_script}
+    ${PROJECT_BINARY_DIR}/${_script}
+    COPYONLY
+    )
+endforeach()
 
 #----------------------------------------------------------------------------
 # For internal Geant4 use - but has no effect if you build this
