@@ -326,6 +326,38 @@ void NeutReflect_DetectorConstruction::DefineMaterials()
 	stainlessSteel->AddElement(elP,massfracP);
 	stainlessSteel->AddElement(elSi,massfracSi);
 	stainlessSteel->AddElement(elS,massfracS);
+
+
+        // Define Helium
+        G4Element* elementHe = new G4Element(name="Helium", symbol="He", z=2., a=4.003*g/mole);
+        G4IsotopeVector *ivec;
+        G4double *relabvec;
+        ivec = elementHe->GetIsotopeVector();
+        relabvec = elementHe->GetRelativeAbundanceVector();
+        for(int i=0;i<elementHe->GetNumberOfIsotopes();i++){
+          G4cout << "He isotope " << i+1 << " is A = " << (*ivec)[i]->GetN() <<
+                  ", relative abundance: " << relabvec[i] << G4endl;
+        }
+        G4cout << "Is the He natural abundance distribution? " << elementHe->GetNaturalAbundanceFlag() << G4endl;
+
+        // Define specialized Helium
+        G4Isotope *isoHe4 = new G4Isotope("4He",2,4); //when it asks for N does it really mean (integer) A?
+        G4Isotope *isoHe3 = new G4Isotope("3He",2,3); 
+        G4Element *stillLiquidHe = new G4Element("Liquid3He","L3He",1);
+        stillLiquidHe->AddIsotope(isoHe3,1.0);
+        G4Element *MCLiquidHe = new G4Element("MCLiquidHe","LHeMix",2);
+        MCLiquidHe->AddIsotope(isoHe3,0.12);
+        MCLiquidHe->AddIsotope(isoHe4,0.88);
+
+        // Liquid Helium
+        G4Material* liquidHelium=new G4Material(name="liquidHelium", density=.1412*g/cm3, ncomponents=1);
+        liquidHelium->AddElement(elementHe,natoms=2);
+
+        // More complex Helium Liquid
+        G4Material* stillLiquid = new G4Material(name="stillLiquid",density=0.081*g/cm3,ncomponents=1);
+        stillLiquid->AddElement(stillLiquidHe,natoms=2);
+        G4Material* MCLiquid = new G4Material(name="MCLiquid",density=0.1412*g/cm3,ncomponents=1); //assumed to be same as LHe
+        MCLiquid->AddElement(MCLiquidHe,natoms=2);
 	
 	// ------------------------------------------------
 	//Define new Elements for "high strength plastic" 
@@ -337,6 +369,11 @@ void NeutReflect_DetectorConstruction::DefineMaterials()
 	// Assign materials to some of the major components
 
         exampleMat = Vacuum; //change to air at STP
+  	shieldCuMat = Cu;
+  	shieldPbMat = Pb; 
+  	helium=liquidHelium;
+   	stillHe=stillLiquid;
+  	MCHe=MCLiquid;
 	
 	// ------------------------------------------------
 	

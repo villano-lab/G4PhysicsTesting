@@ -97,6 +97,9 @@ private:
   G4Material* Argon;
   G4Material* Neon;
   G4Material* Aluminium;
+  G4Material* shieldCuMat, *shieldPbMat;
+  G4Material* stillHe,*MCHe;
+  G4Material* helium;
 
   G4double BeR;
   G4double Bet;
