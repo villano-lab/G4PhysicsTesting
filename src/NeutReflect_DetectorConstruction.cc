@@ -549,6 +549,9 @@ G4VPhysicalVolume* NeutReflect_DetectorConstruction::Construct()
 	  //just a Ne detector centered at zero
           ConstructNeDet(physicalWorld,0.0);
         }
+        else if(DesignNo==-15){
+          Construct3HeTube(physicalWorld);
+        }
         
 	
 	
@@ -2637,6 +2640,50 @@ G4int gshelf)
         */
 	
         return;
+}
+void NeutReflect_DetectorConstruction::Construct3HeTube(G4VPhysicalVolume *world)
+{
+        G4double vthk=400.0;
+        G4double vrad=146.2;
+        G4double vh=2000.0;
+        //only use rotation if parent volume is null (highest)
+        G4RotationMatrix *thisrot;
+        if(world->GetName()=="world_P")
+          thisrot=xrot;
+        else
+          thisrot=nullrot;
+
+	//make a steel
+	G4Tubs* steelCylinderOut = new G4Tubs("stCylOut_S",0.0,vrad+vthk,vh/2,0.0,2*pi);
+	G4Tubs* steelCylinderIn = new G4Tubs("stCylIn_S",0.0,vrad,(vh-vthk*2)/2,0.0,2*pi);
+	G4VSolid* steelShell = new G4SubtractionSolid("stShell_S",steelCylinderOut,
+                                                                        steelCylinderIn,
+                                                                        0,
+                                                                        G4ThreeVector(0,0,0));
+	
+	G4LogicalVolume* logicalSteelShell = new G4LogicalVolume(steelShell,stainlessSteel,"stShell_L",0,0,0);
+	G4VPhysicalVolume* shellSteelWorld = new G4PVPlacement(thisrot, //no rotation
+			     				       G4ThreeVector(0,0,0),
+							       "stShell_P",
+								logicalSteelShell,
+								world,
+								false,
+								0);
+
+	// Visualization attributes
+	G4VisAttributes* VisAttStShell = new G4VisAttributes(G4Colour(0.5,0.5,0.5));
+	//VisAttStShell->SetForceSolid(false);
+	VisAttStShell->SetForceWireframe(true);  //I want a Wireframe of the me
+	logicalSteelShell->SetVisAttributes(VisAttStShell);  
+	// Make Invisible
+	//logicalSteelShell->SetVisAttributes(G4VisAttributes::Invisible);
+
+        //make this sensitive
+        if(ConstructGenericSensitiveInt>1){
+          ConstructGenericSensitive(logicalSteelShell,"SteelShell");
+        }
+        return;
+
 }
 // ------------------Tracking Region----------------------
 

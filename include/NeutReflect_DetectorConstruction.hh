@@ -173,7 +173,9 @@ private:
  					      G4double zpos=0.0,
                                               G4int bshelf=0,
                                               G4int gshelf=1);
-
+  void Construct3HeTube(G4VPhysicalVolume*);
+  void ConstructL3HeDesign1(G4VPhysicalVolume*);
+  
 
 };
 
