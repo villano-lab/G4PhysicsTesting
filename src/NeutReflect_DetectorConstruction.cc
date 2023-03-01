@@ -358,6 +358,13 @@ void NeutReflect_DetectorConstruction::DefineMaterials()
         stillLiquid->AddElement(stillLiquidHe,natoms=2);
         G4Material* MCLiquid = new G4Material(name="MCLiquid",density=0.1412*g/cm3,ncomponents=1); //assumed to be same as LHe
         MCLiquid->AddElement(MCLiquidHe,natoms=2);
+
+        // Gaseous Heliums
+        G4Material* GasHelium=new G4Material(name="GasHelium", density=.0001786*g/cm3, ncomponents=1);
+        GasHelium->AddElement(elementHe,natoms=2);
+        G4Material* Gas3Helium=new G4Material(name="Gas3Helium", density=.00013395*g/cm3, ncomponents=1); //just did (3/4) density of 4He b/c of molar mass ratio should
+        //both be ideal and thus have same number density at STP
+        GasHelium->AddElement(stillLiquidHe,natoms=2);
 	
 	// ------------------------------------------------
 	//Define new Elements for "high strength plastic" 
@@ -374,6 +381,8 @@ void NeutReflect_DetectorConstruction::DefineMaterials()
   	helium=liquidHelium;
    	stillHe=stillLiquid;
   	MCHe=MCLiquid;
+        GasHe = GasHelium;
+        Gas3He = Gas3Helium;
 	
 	// ------------------------------------------------
 	

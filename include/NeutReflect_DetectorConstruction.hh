@@ -100,6 +100,7 @@ private:
   G4Material* shieldCuMat, *shieldPbMat;
   G4Material* stillHe,*MCHe;
   G4Material* helium;
+  G4Material* GasHe,*Gas3He;
 
   G4double BeR;
   G4double Bet;
