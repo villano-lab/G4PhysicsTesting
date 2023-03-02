@@ -12,10 +12,11 @@
 /vis/viewer/set/style surface
 /vis/viewer/set/upVector 0 1 0
 /vis/viewer/set/lightsThetaPhi 90 0 deg
-/vis/viewer/set/viewpointThetaPhi 90 93 deg
+#/vis/viewer/set/viewpointThetaPhi 90 93 deg
 #/vis/viewer/set/viewpointThetaPhi 90 0 deg
 #/vis/viewer/zoom 1.5
 /vis/viewer/set/sectionPlane on 0 0 0 cm 1 0 0
+/vis/viewer/set/viewpointVector -1 0 0
 
 #make some special colors
 /tracking/storeTrajectory 0
