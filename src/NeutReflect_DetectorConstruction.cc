@@ -364,7 +364,13 @@ void NeutReflect_DetectorConstruction::DefineMaterials()
         GasHelium->AddElement(elementHe,natoms=2);
         G4Material* Gas3Helium=new G4Material(name="Gas3Helium", density=.00013395*g/cm3, ncomponents=1); //just did (3/4) density of 4He b/c of molar mass ratio should
         //both be ideal and thus have same number density at STP
-        GasHelium->AddElement(stillLiquidHe,natoms=2);
+        Gas3Helium->AddElement(stillLiquidHe,natoms=2);
+
+	//high-pressure gaseous helium 3
+        G4Material* Gas3Helium6atm=new G4Material(name="Gas3Helium6atm", density=6*0.00013395*g/cm3, ncomponents=1);
+        Gas3Helium6atm->AddElement(stillLiquidHe,natoms=2);
+        G4Material* Gas3Helium10atm=new G4Material(name="Gas3Helium6atm", density=10*0.00013395*g/cm3, ncomponents=1);
+        Gas3Helium10atm->AddElement(stillLiquidHe,natoms=2);
 	
 	// ------------------------------------------------
 	//Define new Elements for "high strength plastic" 
@@ -383,6 +389,8 @@ void NeutReflect_DetectorConstruction::DefineMaterials()
   	MCHe=MCLiquid;
         GasHe = GasHelium;
         Gas3He = Gas3Helium;
+        Gas3He6atm = Gas3Helium6atm;
+        Gas3He10atm = Gas3Helium10atm;
 	
 	// ------------------------------------------------
 	

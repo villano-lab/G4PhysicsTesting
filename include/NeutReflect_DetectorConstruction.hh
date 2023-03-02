@@ -101,6 +101,7 @@ private:
   G4Material* stillHe,*MCHe;
   G4Material* helium;
   G4Material* GasHe,*Gas3He;
+  G4Material* Gas3He6atm,*Gas3He10atm;
 
   G4double BeR;
   G4double Bet;
