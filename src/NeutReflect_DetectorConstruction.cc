@@ -2673,6 +2673,11 @@ void NeutReflect_DetectorConstruction::Construct3HeTube(G4VPhysicalVolume *world
         else
           thisrot=nullrot;
 
+	//make a He cylinder 
+	G4Tubs* He3Cylinder = new G4Tubs("HeCyl_S",0.0,vrad,(vh/2)-vthk,0.0,2*pi);
+	G4LogicalVolume* logicalHe3Cylinder = new G4LogicalVolume(He3Cylinder,Gas3He6atm,"HeCylinder_L",0,0,0);
+
+
 	//make a steel
 	G4Tubs* steelCylinder = new G4Tubs("stCyl_S",0.0,vrad+vthk,vh/2,0.0,2*pi);
 	//G4VSolid* steelShell = new G4SubtractionSolid("stShell_S",steelCylinderOut,
@@ -2689,17 +2694,27 @@ void NeutReflect_DetectorConstruction::Construct3HeTube(G4VPhysicalVolume *world
 								false,
 								0);
 
+	G4VPhysicalVolume* He3World = new G4PVPlacement(nullrot, //no rotation
+			     				       G4ThreeVector(0,0,0),
+							       "HeCyl_P",
+								logicalHe3Cylinder,
+								shellSteelWorld,
+								false,
+								0);
+
 	// Visualization attributes
 	G4VisAttributes* VisAttStCyl = new G4VisAttributes(G4Colour(0.5,0.5,0.5));
+	G4VisAttributes* VisAttHeCyl = new G4VisAttributes(G4Colour(0.0,0.0,0.5));
 	//VisAttStShell->SetForceSolid(false);
 	//VisAttStShell->SetForceWireframe(true);  //I want a Wireframe of the me
 	logicalSteelCylinder->SetVisAttributes(VisAttStCyl);  
+	logicalHe3Cylinder->SetVisAttributes(VisAttHeCyl);  
 	// Make Invisible
 	//logicalSteelShell->SetVisAttributes(G4VisAttributes::Invisible);
 
         //make this sensitive
-        if(ConstructGenericSensitiveInt>1){
-          ConstructGenericSensitive(logicalSteelCylinder,"SteelCylinder");
+        if(ConstructGenericSensitiveInt>0){
+          ConstructGenericSensitive(logicalHe3Cylinder,"He3Cylinder");
         }
         return;
 
