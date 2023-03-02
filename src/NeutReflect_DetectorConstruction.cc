@@ -65,6 +65,9 @@ DiskDisplacement(-3.175)
 	// -------- The World ---------
 	//world_x = 16.01*m; world_y = 16.01*m; world_z = 9.0*m;
 	world_x = 3.0*m; world_y = 3.0*m; world_z = 3.0*m;
+        if(design==-15){
+	  world_x = 1.0*m; world_y = 1.0*m; world_z = 1.0*m;
+	}
 
         //set some parameters
         mfp_Pb_1_8=18.6;
@@ -2660,9 +2663,9 @@ G4int gshelf)
 }
 void NeutReflect_DetectorConstruction::Construct3HeTube(G4VPhysicalVolume *world)
 {
-        G4double vthk=400.0;
-        G4double vrad=146.2;
-        G4double vh=2000.0;
+        G4double vthk=3.0;
+        G4double vrad=50.0/2.0; //5cm inner diameter
+        G4double vh=150.0;
         //only use rotation if parent volume is null (highest)
         G4RotationMatrix *thisrot;
         if(world->GetName()=="world_P")
@@ -2671,33 +2674,32 @@ void NeutReflect_DetectorConstruction::Construct3HeTube(G4VPhysicalVolume *world
           thisrot=nullrot;
 
 	//make a steel
-	G4Tubs* steelCylinderOut = new G4Tubs("stCylOut_S",0.0,vrad+vthk,vh/2,0.0,2*pi);
-	G4Tubs* steelCylinderIn = new G4Tubs("stCylIn_S",0.0,vrad,(vh-vthk*2)/2,0.0,2*pi);
-	G4VSolid* steelShell = new G4SubtractionSolid("stShell_S",steelCylinderOut,
-                                                                        steelCylinderIn,
-                                                                        0,
-                                                                        G4ThreeVector(0,0,0));
+	G4Tubs* steelCylinder = new G4Tubs("stCyl_S",0.0,vrad+vthk,vh/2,0.0,2*pi);
+	//G4VSolid* steelShell = new G4SubtractionSolid("stShell_S",steelCylinderOut,
+        //                                                                steelCylinderIn,
+        //                                                                0,
+        //                                                                G4ThreeVector(0,0,0));
 	
-	G4LogicalVolume* logicalSteelShell = new G4LogicalVolume(steelShell,stainlessSteel,"stShell_L",0,0,0);
+	G4LogicalVolume* logicalSteelCylinder = new G4LogicalVolume(steelCylinder,stainlessSteel,"stCylinder_L",0,0,0);
 	G4VPhysicalVolume* shellSteelWorld = new G4PVPlacement(thisrot, //no rotation
 			     				       G4ThreeVector(0,0,0),
-							       "stShell_P",
-								logicalSteelShell,
+							       "stCyl_P",
+								logicalSteelCylinder,
 								world,
 								false,
 								0);
 
 	// Visualization attributes
-	G4VisAttributes* VisAttStShell = new G4VisAttributes(G4Colour(0.5,0.5,0.5));
+	G4VisAttributes* VisAttStCyl = new G4VisAttributes(G4Colour(0.5,0.5,0.5));
 	//VisAttStShell->SetForceSolid(false);
-	VisAttStShell->SetForceWireframe(true);  //I want a Wireframe of the me
-	logicalSteelShell->SetVisAttributes(VisAttStShell);  
+	//VisAttStShell->SetForceWireframe(true);  //I want a Wireframe of the me
+	logicalSteelCylinder->SetVisAttributes(VisAttStCyl);  
 	// Make Invisible
 	//logicalSteelShell->SetVisAttributes(G4VisAttributes::Invisible);
 
         //make this sensitive
         if(ConstructGenericSensitiveInt>1){
-          ConstructGenericSensitive(logicalSteelShell,"SteelShell");
+          ConstructGenericSensitive(logicalSteelCylinder,"SteelCylinder");
         }
         return;
 
