@@ -2704,7 +2704,7 @@ void NeutReflect_DetectorConstruction::Construct3HeTube(G4VPhysicalVolume *world
 
 	// Visualization attributes
 	G4VisAttributes* VisAttStCyl = new G4VisAttributes(G4Colour(0.5,0.5,0.5));
-	G4VisAttributes* VisAttHeCyl = new G4VisAttributes(G4Colour(0.0,0.0,0.5));
+	G4VisAttributes* VisAttHeCyl = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
 	//VisAttStShell->SetForceSolid(false);
 	//VisAttStShell->SetForceWireframe(true);  //I want a Wireframe of the me
 	logicalSteelCylinder->SetVisAttributes(VisAttStCyl);  
